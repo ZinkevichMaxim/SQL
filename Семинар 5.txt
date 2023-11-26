@@ -1,0 +1,42 @@
+Задача 1
+
+Определить ранг отправителей сообщений на основе количества сообщений, которые они отправили. Вывести ранг, имя и фамилию отправителей, а также количество сообщений, которые они отправили. Отсортировать результат в порядке убывания количества сообщений.
+
+Для выполнения этой задачи используйте следующие таблицы:
+
+users: Эта таблица содержит информацию о пользователях, включая их идентификаторы (id), имена (firstname), фамилии (lastname) и другие данные.
+
+messages: В этой таблице хранятся записи о сообщениях, включая информацию о идентификаторах сообщений (id), отправителях (from_user_id) и другие детали сообщений.
+
+Решение
+
+SELECT
+    DENSE_RANK() OVER (ORDER BY COUNT(m.id) DESC) AS rank_cnt,
+    CONCAT (u.firstname, ' ', u.lastname) AS 'sender',
+    COUNT(m.id) AS cnt
+FROM users u
+LEFT JOIN messages m ON u.id = m.from_user_id
+GROUP BY u.id
+ORDER BY cnt DESC;
+
+Решение дебильное, т.к. условие неправильное. Скорее всего его перепишут.
+
+Задача 2
+
+Составить список сообщений из таблицы messages, включая их уникальные идентификаторы, отправителя (from_user_id), получателя (to_user_id), текст сообщения (body), дату создания (created_at), а также информацию о времени, прошедшем между этим сообщением и следующим (lead_time и minute_lead_diff) и времени, прошедшем между этим сообщением и предыдущим (lag_time и minute_lag_diff). Время указано в минутах.
+
+Решение
+
+SELECT
+      id,
+      from_user_id,
+      to_user_id,
+      body,
+      created_at,  
+      lead(created_at) OVER w AS lead_time,
+      TIMESTAMPDIFF(MINUTE, created_at, lead(created_at) OVER w) AS minute_lead_diff,
+      lag(created_at) OVER w AS lag_time,      
+      TIMESTAMPDIFF(MINUTE, lag(created_at) OVER w, created_at) AS minute_lag_diff      
+FROM
+    messages
+WINDOW w AS (ORDER BY created_at);
