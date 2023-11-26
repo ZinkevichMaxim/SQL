@@ -1,0 +1,68 @@
+Задача 1
+
+Подсчитать общее количество лайков, поставленных пользователями, чей возраст меньше 12 лет к текущей дате. Для этого объединить таблицы likes, media, и profiles, и учесть только лайки, оставленные пользователями, возраст которых составляет менее 12 лет с момента их дня рождения.
+
+Решение
+
+SELECT count(*)
+FROM likes l
+LEFT JOIN media m ON m.id = l.media_id 
+LEFT JOIN profiles p ON p.user_id = m.user_id
+WHERE timestampdiff(YEAR, birthday, CURRENT_DATE) < 12;
+
+Задача 2
+
+Подсчитать количество лайков, оставленных пользователями, в зависимости от их гендера. Для этого объединить таблицы likes и profiles, сгруппировать данные по полу пользователей и вывести результат в убывающем порядке, начиная с наибольшего количества лайков.
+
+Решение
+
+SELECT count(l.id), p.gender
+FROM likes l
+LEFT JOIN users u ON u.id = l.user_id
+LEFT JOIN profiles p ON p.user_id = u.id
+group by p.gender
+ORDER BY p.gender 
+;
+
+Задача 3
+
+Выбрать пользователей из таблицы users, которые не отправили ни одного сообщения (не имеют записей в таблице 'messages').
+
+Решение
+
+SELECT
+	u.id,
+	CONCAT(u.firstname, ' ', u.lastname) AS 'user'
+FROM users u
+LEFT JOIN messages m ON m.from_user_id = u.id 
+WHERE from_user_id is null
+;
+
+Задача 4
+
+У вас есть база данных с тремя таблицами: users (пользователи),messages (сообщения) и friend_requests (запросы на добавление в друзья).
+
+Каждая запись в таблице usersсодержит информацию о пользователе, включая уникальный идентификатор (id), имя (firstname), и фамилию (lastname).
+
+Таблица friend_requests содержит информацию о запросах на добавление в друзья с полями: уникальный идентификатор (id), идентификатор инициатора запроса (initiator_user_id), идентификатор целевого пользователя (target_user_id) и статус запроса (status), где 'approved' указывает на утвержденные запросы.
+
+Таблица messages содержит информацию о сообщениях с полями: уникальный идентификатор (id), идентификатор отправителя (from_user_id), идентификатор получателя (to_user_id) и текст сообщения (message_text).
+
+Ваша задача состоит в том, чтобы написать SQL-запрос, который вернет идентификатор и имя отправителя, который отправил наибольшее количество сообщений пользователю с идентификатором 1, при условии, что запросы на добавление в друзья между отправителем и получателем сообщений имеют статус 'approved'.
+
+Также, учтите, что некоторые пользователи могут быть отправителями сообщений, но не обязательно быть друзьями (не иметь утвержденных запросов на добавление в друзья).
+
+Решение
+
+SELECT  
+ m.from_user_id, 
+ CONCAT(u.firstname, ' ', u.lastname)  AS 'from_user',  
+ COUNT(*) AS cnt  
+FROM messages m  
+JOIN users u ON u.id=m.from_user_id 
+JOIN friend_requests fr ON (fr.initiator_user_id=m.to_user_id AND fr.target_user_id=m.from_user_id) 
+                            OR (fr.target_user_id =m.to_user_id AND fr.initiator_user_id=m.from_user_id) 
+WHERE fr.status='approved' AND m.to_user_id=1 
+GROUP BY m.from_user_id 
+ORDER BY cnt DESC 
+LIMIT 1;
