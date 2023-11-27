@@ -1,0 +1,75 @@
+create database if not exists lecture_4;
+use lecture_4
+/*
+СОЕДИНЕНИЕ ДВУХ СЕЛЕКТ ПРИЛОЖЕНИЙ В SQL
+
+UNION используется для объединения
+наборов результатов из 2 или более SELECT предложений. Он
+удаляет повторяющиеся строки между различными
+предложениями SELECT. ОДИНАКОВОЕ КОЛИЧЕСТВО ПОЛЕЙ
+
+select 1, 2 from table_1_name
+union 
+select a, b; from table_2_name;
+
+МИНУС - удаляются повторяющиеся значения. Выводятся только уникальные значения
+
+Можно использовать вместе с ORDER BY
+select 1, 2 from table_1_name
+union 
+select a, b; from table_2_name
+ORDER BY 1 DESC;
+
+Можно использовать в пределах одной таблицы с WHERE
+select 1, 2 from table_1_name
+WHERE условие_1
+union
+select 1, 2; from table_1_name                                                                таже таблица
+WHERE условие_2
+ORDER BY 1 DESC;
+
+UNION ALL
+ОДИНАКОВОЕ КОЛИЧЕСТВО СТРОК!! 
+Обьединяет все строки
+
+select 1, 2 from table_1_name
+union all
+select a, b; from table_2_name
+ORDER BY 1 DESC;
+
+СОЕДИНЕНИЕ ТАБЛИЦ JOIN
+INNER JOIN: возвращает записи с совпадающими значениями в
+обеих таблицах.
+LEFT JOIN: возвращает все записи из левой таблицы и
+соответствующие записи из правой таблицы.
+RIGHT JOIN: возвращает все записи из правой таблицы и
+соответствующие записи из левой таблицы.
+CROSS JOIN: возвращает все записи из обеих таблиц
+
+INNER JOIN
+SELECT столбцы
+FROM таблица1
+INNER JOIN таблица2
+ON условие1
+INNER JOIN таблица3
+ON условие3
+
+ПОДЗАПРОСЫ
+IN (NOT IN) 
+EXIST
+СREATE TABLE SELECT - создать и склонировать (скопировать)
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+*/
